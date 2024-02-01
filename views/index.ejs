@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<script type="module"
+    src="https://1.www.s81c.com/common/carbon/web-components/version/v2.2.0/data-table.min.js"></script>
+<script type="module" src="https://1.www.s81c.com/common/carbon/web-components/version/v2.2.0/checkbox.min.js"></script>
+<script type="module" src="https://1.www.s81c.com/common/carbon/web-components/version/v2.2.0/button.min.js"></script>
+
+<body>
+    <h1><%= title %></h1>
+    <% cloudOptions.forEach(option => { %>
+    <cds-table is-selectable>
+        <cds-table-header-title slot="title"><%= option.name %></cds-table-header-title>
+        <cds-table-header-description slot="description"><%= option.description %></cds-table-header-description>
+        <cds-table-head>
+            <cds-table-header-row selection-name="all">
+                <cds-table-header-cell>Task</cds-table-header-cell>
+                <cds-table-header-cell>Description</cds-table-header-cell>
+            </cds-table-header-row>
+        </cds-table-head>
+        <cds-table-body>
+            <% option.tasks.forEach(task => { %>
+            <cds-table-row selection-name="<%= `${option.name}$${task.name}` %>">
+                <cds-table-cell><%= task.name %></cds-table-cell>
+                <cds-table-cell><%= task.description %></cds-table-cell>
+            </cds-table-row>
+            <% }) %>
+        </cds-table-body>
+    </cds-table>
+    <% })%>
+    </br>
+    <cds-button onclick="execute()"> Run Tasks </cds-button>
+</body>
+<script>
+    const execute = () => {
+        let data = {}
+        document.querySelectorAll('cds-table-row').forEach(ele => {
+            let val = ele.getAttribute("selection-name")
+            let option = val.split("$")[0]
+            let task = val.split("$")[1]
+            try {
+                data[option][task] = ele.selected
+            } catch {
+                data[option] = {}
+                data[option][task] = ele.selected
+            }
+        })
+        console.log(data)
+        fetch('/api/sendtasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+    }
+</script>
+
+</html>

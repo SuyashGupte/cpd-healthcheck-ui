@@ -39,7 +39,7 @@ app.post('/api/shutdown', (req, res) => {
 app.post('/api/sendtasks', (req, res) => {
   const data = req.body;
   console.log('Received data:', data);
-  fs.writeFileSync('./cpdtools/taskList.json', JSON.stringify(data))
+  fs.writeFileSync('./taskList.json', JSON.stringify(data))
   res.send('Shutting down the server...');
   // Close the server gracefully
   server.close(() => {

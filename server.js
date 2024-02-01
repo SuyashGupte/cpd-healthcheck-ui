@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const cloudOptions = JSON.parse(fs.readFileSync("./options.json").toString())
+const cloudOptions = JSON.parse(fs.readFileSync("./cpd-healthcheck-ui/options.json").toString())
 
 // Define a route to render the EJS template
 app.get('/', (req, res) => {
@@ -39,7 +39,7 @@ app.post('/api/shutdown', (req, res) => {
 app.post('/api/sendtasks', (req, res) => {
   const data = req.body;
   console.log('Received data:', data);
-  fs.writeFileSync('taskList.json', JSON.stringify(data))
+  fs.writeFileSync('./cpd-healthcheck-ui/taskList.json', JSON.stringify(data))
   res.send('Shutting down the server...');
   // Close the server gracefully
   server.close(() => {
